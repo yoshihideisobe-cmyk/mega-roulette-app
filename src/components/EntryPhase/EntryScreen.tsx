@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { NameList } from "./NameList";
 import { Participant } from "@/types";
-import { Play } from "lucide-react";
+import { Play, ArrowLeft } from "lucide-react";
 import { useSoundManager } from "@/hooks/useSoundManager";
 
 interface EntryScreenProps {
@@ -16,6 +16,7 @@ interface EntryScreenProps {
     submitLabel?: string;
     emptyMessage?: string;
     resetLabel?: string;
+    onBack?: () => void; // Added
 }
 
 export function EntryScreen({
@@ -26,7 +27,8 @@ export function EntryScreen({
     placeholder = "参加者名を入力...",
     submitLabel = "START ROULETTE",
     emptyMessage,
-    resetLabel = "リストをリセット"
+    resetLabel = "リストをリセット",
+    onBack,
 }: EntryScreenProps) {
     const [name, setName] = useState("");
     const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
@@ -80,12 +82,26 @@ export function EntryScreen({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-            className="max-w-md w-full mx-auto p-6"
+            className="max-w-md w-full mx-auto p-2 relative" // Added relative
         >
-            <div className="glass-panel p-8 rounded-2xl flex flex-col gap-6">
-                <h1 className="text-4xl font-black text-center text-gradient-gold font-cinzel tracking-tight leading-none drop-shadow-lg">
+            {/* Back Button for Prize Selection Phase */}
+            {onBack && (
+                <div className="absolute top-0 left-0 -translate-y-full mb-2 p-2 w-full flex justify-start">
+                    <Button
+                        onClick={onBack}
+                        variant="secondary"
+                        size="sm"
+                        className="bg-transparent hover:bg-white/10 text-white/50 hover:text-white border-none flex items-center gap-2 pl-0"
+                    >
+                        <ArrowLeft size={16} /> <span>参加者登録へ戻る</span>
+                    </Button>
+                </div>
+            )}
+
+            <div className="glass-panel p-4 rounded-2xl flex flex-col gap-3">
+                <h1 className="text-3xl font-black text-center text-gradient-gold font-cinzel tracking-tight leading-none drop-shadow-lg">
                     MEGA ROULETTE<br />
-                    <span className="text-xl tracking-widest text-white/80 font-inter font-normal">{title}</span>
+                    <span className="text-sm tracking-widest text-white/80 font-inter font-normal">{title}</span>
                 </h1>
 
                 <div className="flex gap-2 items-end">
@@ -102,12 +118,14 @@ export function EntryScreen({
                     </Button>
                 </div>
 
-                <NameList participants={participants} onRemove={handleRemove} emptyMessage={emptyMessage} />
+                <div className="flex-1 overflow-hidden min-h-0">
+                    <NameList participants={participants} onRemove={handleRemove} emptyMessage={emptyMessage} />
+                </div>
 
-                <div className="mt-4 flex flex-col gap-4 justify-center">
+                <div className="mt-2 flex flex-col gap-2 justify-center">
                     <Button
                         onClick={handleStart}
-                        size="lg"
+                        size="md"
                         variant="primary"
                         className="w-full flex items-center justify-center gap-2"
                         disabled={participants.length === 0}

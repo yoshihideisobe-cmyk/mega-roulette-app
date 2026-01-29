@@ -19,10 +19,10 @@ import { Button } from "@/components/ui/Button";
 // Mapping is safer.
 
 const DEFAULT_PRIZES: Prize[] = [
-  { id: "p1", name: "お祝いスピーチ3分" },
-  { id: "p2", name: "隠し事暴露します実は" },
-  { id: "p3", name: "商品当選！商品券贈呈" },
-  { id: "p4", name: "腕立て15回" },
+  { id: "p1", name: "商品券1万円" },
+  { id: "p2", name: "ふ陸70周年記念サコシュ" },
+  { id: "p3", name: "ふ陸70周年記念サコシュ" },
+  { id: "p4", name: "女鹿社長へのお祝いスピーチ3分" },
 ];
 
 export default function Home() {
@@ -105,6 +105,10 @@ export default function Home() {
     // "Reset" button in result usually goes back to Entry.
   };
 
+  const handleBackToEntry = () => {
+    setPhase("ENTRY");
+  };
+
   const handleClearParticipants = () => {
     if (confirm("全ての参加者を削除してもよろしいですか？")) {
       setParticipants([]);
@@ -130,13 +134,13 @@ export default function Home() {
   const activePrizesAsParticipants = activePrizes.map(p => ({ id: p.id, name: p.name }));
 
   return (
-    <main className="min-h-screen w-full relative overflow-hidden flex flex-col items-center justify-center p-4">
+    <main className="h-[100dvh] w-full relative overflow-hidden flex flex-col items-center justify-center p-2 sm:p-4">
       {/* Dynamic Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-navy via-[#0f172a] to-navy z-0" />
       <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 z-0 pointer-events-none" />
 
       {/* Content Layer */}
-      <div className="relative z-10 w-full max-w-4xl mx-auto min-h-[600px] flex items-center justify-center">
+      <div className="relative z-10 w-full max-w-4xl mx-auto h-full flex items-center justify-center">
         <AnimatePresence mode="wait">
 
           {/* PHASE 1: PARTICIPANT ENTRY */}
@@ -156,6 +160,7 @@ export default function Home() {
               key="roulette"
               participants={activeParticipants.length > 0 ? activeParticipants : participants} // Fallback if all won?
               onFinish={handleRouletteFinish}
+              onBack={handleBackToEntry}
             />
           )}
 
@@ -204,6 +209,7 @@ export default function Home() {
               submitLabel="START PRIZE ROULETTE"
               emptyMessage="景品が登録されていません"
               resetLabel="商品リストをリセット"
+              onBack={handleBackToEntry}
             />
           )}
 
@@ -213,6 +219,7 @@ export default function Home() {
               key="prize_roulette"
               participants={activePrizesAsParticipants.length > 0 ? activePrizesAsParticipants : prizesAsParticipants}
               onFinish={handlePrizeFinish}
+              onBack={handleGoToPrize} // Reuse handleGoToPrize as "Back to Prize Entry"
             />
           )}
 

@@ -34,14 +34,15 @@ export function ResultScreen({ winner, onReset, customActions, title, subTitle }
             <WinnerOverlay winner={winner} title={title} subTitle={subTitle} />
 
             {/* Controls - Positioned at bottom but z-index high */}
+            {/* Controls - Positioned at bottom but z-index high */}
             <motion.div
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.5 }}
-                className="absolute bottom-10 z-[60] pointer-events-auto"
+                className="absolute bottom-6 z-[60] pointer-events-auto flex flex-col items-center gap-2"
             >
                 {customActions ? customActions : (
-                    <Button onClick={onReset} variant="secondary" size="lg" className="flex items-center gap-2">
+                    <Button onClick={onReset} variant="secondary" size="md" className="flex items-center gap-2">
                         <RotateCcw /> RESET
                     </Button>
                 )}

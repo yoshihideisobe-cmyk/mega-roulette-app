@@ -5,13 +5,15 @@ import { Button } from "@/components/ui/Button";
 import { CharacterDisplay } from "./CharacterDisplay";
 import { DrumRoll, DrumRollHandle } from "./DrumRoll";
 import { useSoundManager } from "@/hooks/useSoundManager";
+import { ArrowLeft } from "lucide-react";
 
 interface RouletteScreenProps {
     participants: Participant[];
     onFinish: (winner: Participant) => void;
+    onBack?: () => void;
 }
 
-export function RouletteScreen({ participants, onFinish }: RouletteScreenProps) {
+export function RouletteScreen({ participants, onFinish, onBack }: RouletteScreenProps) {
     const [spinning, setSpinning] = useState(false);
     const [characterState, setCharacterState] = useState<"normal" | "surprised" | "win">("normal");
     const drumRef = useRef<DrumRollHandle>(null);
@@ -85,8 +87,22 @@ export function RouletteScreen({ participants, onFinish }: RouletteScreenProps) 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center gap-8 w-full"
+            className="flex flex-col items-center justify-center gap-4 w-full h-full relative"
         >
+            {/* Back Button */}
+            {!spinning && onBack && (
+                <div className="absolute top-0 left-0 z-50 p-2">
+                    <Button
+                        onClick={onBack}
+                        variant="secondary"
+                        size="sm"
+                        className="bg-black/20 hover:bg-black/40 text-white/50 hover:text-white border-none flex items-center gap-2"
+                    >
+                        <ArrowLeft size={20} /> <span className="hidden sm:inline">← 戻る</span>
+                    </Button>
+                </div>
+            )}
+
             <div
                 onDoubleClick={handleDoubleClick}
                 className="cursor-pointer select-none"
@@ -97,20 +113,21 @@ export function RouletteScreen({ participants, onFinish }: RouletteScreenProps) 
                 {godMode && <div className="w-1 h-1 bg-red-500 rounded-full mx-auto mt-2 opacity-50" />}
             </div>
 
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-md flex-1 flex items-center justify-center min-h-0">
                 <DrumRoll
                     ref={drumRef}
                     participants={participants}
-                    itemHeight={80}
+                    itemHeight={60}
+                    containerHeight={140}
                 />
             </div>
 
-            <div className="pt-4 z-20">
+            <div className="pt-2 z-20 pb-4">
                 {!spinning ? (
                     <Button
                         size="lg"
                         onClick={startSpin}
-                        className="w-48 text-2xl animate-bounce"
+                        className="w-48 text-xl animate-bounce"
                         style={{ animationDuration: "2s" }}
                     >
                         SPIN
@@ -120,7 +137,7 @@ export function RouletteScreen({ participants, onFinish }: RouletteScreenProps) 
                         size="lg"
                         variant="danger"
                         onClick={stopSpin}
-                        className="w-48 text-2xl"
+                        className="w-48 text-xl"
                     >
                         STOP
                     </Button>

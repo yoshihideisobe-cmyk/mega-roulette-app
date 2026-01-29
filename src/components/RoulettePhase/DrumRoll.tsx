@@ -7,6 +7,7 @@ import { useSoundManager } from "@/hooks/useSoundManager";
 interface DrumRollProps {
     participants: Participant[];
     itemHeight?: number;
+    containerHeight?: number; // Added
     onSpinStart?: () => void;
     onSpinStop?: () => void;
 }
@@ -20,7 +21,7 @@ export interface DrumRollHandle {
 const COPIES = 50;
 
 export const DrumRoll = forwardRef<DrumRollHandle, DrumRollProps>(
-    ({ participants, itemHeight = 80, onSpinStart, onSpinStop }, ref) => {
+    ({ participants, itemHeight = 80, containerHeight = 184, onSpinStart, onSpinStop }, ref) => {
         // We use `useAnimate` for imperative control of the sequence
         const [scope, animate] = useAnimate();
         const [displayList, setDisplayList] = useState<Participant[]>([]);
@@ -101,7 +102,7 @@ export const DrumRoll = forwardRef<DrumRollHandle, DrumRollProps>(
             const diffToWinner = (winnerIndex - remainder + participants.length) % participants.length;
             const targetAbsoluteIndex = minTargetIndex + diffToWinner;
 
-            const CENTER_OFFSET = 184 / 2 - itemHeight / 2;
+            const CENTER_OFFSET = containerHeight / 2 - itemHeight / 2;
             const getTargetY = (index: number) => - (index * itemHeight) + CENTER_OFFSET;
 
             // --- PHASE 1: SMOOTH TRANSITION (Deceleration) ---
@@ -195,9 +196,17 @@ export const DrumRoll = forwardRef<DrumRollHandle, DrumRollProps>(
         }));
 
         return (
-            <div className="relative w-full max-w-sm mx-auto h-[184px] overflow-hidden bg-black/40 rounded-xl border-4 border-gold shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]">
+            <div
+                className={cn(
+                    "relative w-full max-w-sm mx-auto overflow-hidden bg-black/40 rounded-xl border-4 border-gold shadow-[inset_0_0_20px_rgba(0,0,0,0.8)]"
+                )}
+                style={{ height: containerHeight }}
+            >
                 {/* Highlight Line / Payline - Center */}
-                <div className="absolute top-1/2 left-0 w-full h-[84px] -translate-y-1/2 bg-gold/10 border-y-2 border-gold/50 z-10 pointer-events-none backdrop-blur-[1px]" />
+                <div
+                    className="absolute top-1/2 left-0 w-full -translate-y-1/2 bg-gold/10 border-y-2 border-gold/50 z-10 pointer-events-none backdrop-blur-[1px]"
+                    style={{ height: itemHeight + 4 }} // Slightly larger than item
+                />
 
                 {/* Shadow Gradients for depth */}
                 <div className="absolute top-0 left-0 w-full h-12 bg-gradient-to-b from-black/80 to-transparent z-10" />
